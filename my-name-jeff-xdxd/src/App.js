@@ -26,7 +26,7 @@ class Board extends React.Component {
         };
     };
     splitBoard(sub){
-      return <tr>{sub}</tr>;
+      return(<tr>{sub}</tr>);
     }
 
     //this.state.cards.slice(i)
@@ -102,4 +102,6 @@ class Square extends React.Component {
     }
 }
 
-ReactDOM.render(<Board len={4}/>, document.getElementById('main'));
+export default Board
+
+// ReactDOM.render(<Board len={4}/>, document.getElementById('main'));
