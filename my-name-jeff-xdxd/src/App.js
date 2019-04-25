@@ -1,6 +1,7 @@
-import React from 'react';
-import './App.css';
+const React = require('react');
+const ReactDOM = require('react-dom');
 
+/* Import Components */
 function generateRandom(len) {
     const ascii = [];
     for (let i = 0; i < len/2; i++) {
@@ -13,7 +14,6 @@ function generateRandom(len) {
         const j = Math.floor(Math.random() * (i + 1));
         [ascii[i], ascii[j]] = [ascii[j], ascii[i]];
     }
-
     return String.fromCharCode(...ascii);
 }
 
@@ -21,37 +21,67 @@ function generateRandom(len) {
 class Board extends React.Component {
     constructor(props) {
         super(props);
-        // generateRandom(props.len)
         this.state = {
-            cards: generateRandom(props.len)
+            cards: Array(props.len).fill(null)
         };
     };
-
-    render(){
-        return (
-            <table>
-                <tbody>
-                    <tr>
-                        <Square isHidden={true} value={this.state.cards[0]}/>
-
-                        <Square isHidden={true} value={this.state.cards[1]}/>
-                    </tr>
-                    <tr>
-                        <Square isHidden={true} value={this.state.cards[2]}/>
-
-                        <Square isHidden={true} value={this.state.cards[3]}/>
-                    </tr>
-                </tbody>
-            </table>
-        )
+    splitBoard(sub){
+      return <tr>{sub}</tr>;
     }
 
+    //this.state.cards.slice(i)
+
+    generateBoard() {
+        let x = generateRandom(this.state.cards.length);
+        let build = [];
+        let y = 0;
+        let sub = [];
+        for (let i = 0; i < x.length+1; i++) {
+          if(y === 2){
+            build.push(this.splitBoard(sub));
+            y = 0;
+            sub = []
+          }
+          y++;
+          sub.push(<Square isHidden={false} value={x[i]}/>);
+
+        }
+        return build;
+
+    }
+
+    handleChange(evt) {
+      if (+evt.target.value % 2 === 0 && +evt.target.value >= 4) {
+        this.setState({cards: Array(+evt.target.value).fill(null)});
+      }
+      //Set default to 4 if invalid input
+      else {
+        this.setState({cards: Array(4).fill(null)});
+
+      }
+
+    }
+    render(){
+        return (
+            <div>
+              Enter number of cards:<br></br>(Default and Minimum of 4 cards/Must be even number!)
+             <input type="text" name="" onChange={this.handleChange.bind(this)}/>
+              <table>
+                  <tbody>
+                      <tr>
+                        {this.generateBoard()}
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+        );
+    }
 }
 
 class Square extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
             isHidden: props.isHidden,
             value: props.value
         }
@@ -72,7 +102,4 @@ class Square extends React.Component {
     }
 }
 
-
-
-
-export default Board;
+ReactDOM.render(<Board len={4}/>, document.getElementById('main'));
