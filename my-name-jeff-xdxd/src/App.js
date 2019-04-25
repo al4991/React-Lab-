@@ -1,23 +1,62 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-//
-// function App() {
-//   return (
-//     <div>
-//         ohfoashfao
-//     </div>
-//   );
-// }
+
+function generateRandom(len) {
+    const ascii = [];
+    for (let i = 0; i < len/2; i++) {
+        ascii.push(Math.floor(Math.random() * 94
+        ) + 33);
+    }
+    ascii.push(...ascii);
+    // Adapting the Durstenfield shuffle algorithm I found online
+    for (let i = len - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ascii[i], ascii[j]] = [ascii[j], ascii[i]];
+    }
+
+    return String.fromCharCode(...ascii);
+}
+
+
+class Board extends React.Component {
+    constructor(props) {
+        super(props);
+        // generateRandom(props.len)
+        this.state = {
+            cards: generateRandom(props.len)
+        };
+    };
+
+    render(){
+        return (
+            <table>
+                <tbody>
+                    <tr>
+                        <Square isHidden={true} value={this.state.cards[0]}/>
+
+                        <Square isHidden={true} value={this.state.cards[1]}/>
+                    </tr>
+                    <tr>
+                        <Square isHidden={true} value={this.state.cards[2]}/>
+
+                        <Square isHidden={true} value={this.state.cards[3]}/>
+                    </tr>
+                </tbody>
+            </table>
+        )
+    }
+
+}
 
 class Square extends React.Component {
-    constructor() { 
-        super();
+    constructor(props) {
+        super(props);
         this.state = { 
-            isHidden: true,
-            value: '1'
+            isHidden: props.isHidden,
+            value: props.value
         }
     }
+
     toggleHidden() {
         this.setState({
             isHidden: !this.state.isHidden
@@ -26,12 +65,14 @@ class Square extends React.Component {
 
     render() {
         return (
-            <div className="card" onClick={this.toggleHidden.bind(this)} >
-                {this.state.isHidden && this.state.value}
-            </div>
+            <td className="card" onClick={this.toggleHidden.bind(this)} >
+                {this.state.isHidden && this.props.value}
+            </td>
         )
     }
 }
 
 
-export default Square;
+
+
+export default Board;
